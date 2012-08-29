@@ -203,9 +203,6 @@
 ////////////////////////////////////////////////////////////////////////
 
 - (void)setActiveServicesForTrackingMode:(MTUserTrackingMode)trackingMode {
-    if (MTLocationUsesNewAPIs()) {
-        self.mapView.userTrackingMode = (MKUserTrackingMode)trackingMode;
-    } 
     
     // check new status after status-toggle and update locationManager accordingly
     switch(trackingMode) {
@@ -218,6 +215,9 @@
         case MTUserTrackingModeSearching:
             //NSLog(@"Start updating location");
             [self.locationManager startUpdatingLocation];
+            if (MTLocationUsesNewAPIs()) {
+                [self.mapView setUserTrackingMode:(MKUserTrackingMode)trackingMode animated:YES];
+            }
             [self.locationManager stopUpdatingHeading];
             break;
             
@@ -225,6 +225,9 @@
         case MTUserTrackingModeFollow:
             //NSLog(@"Start updating location");
             [self.locationManager startUpdatingLocation];
+            if (MTLocationUsesNewAPIs()) {
+                [self.mapView setUserTrackingMode:(MKUserTrackingMode)trackingMode animated:YES];
+            }
             [self.locationManager stopUpdatingHeading];
             break;
             
@@ -232,6 +235,9 @@
         case MTUserTrackingModeFollowWithHeading:
             //NSLog(@"start updating heading");
             [self.locationManager startUpdatingLocation];
+            if (MTLocationUsesNewAPIs()) {
+                [self.mapView setUserTrackingMode:(MKUserTrackingMode)trackingMode animated:YES];
+            }
             [self.locationManager startUpdatingHeading];
             break;
     }

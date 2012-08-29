@@ -13,6 +13,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import "MTLocateMeButton.h"
+#import "MTLocationManager.h"
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@
 // foreground images
 #define kMTLocationStatusIdleImage                      @"MTLocation.bundle/Location"
 #define kMTLocationStatusRecevingLocationUpdatesImage	@"MTLocation.bundle/Location"
-#define kMTLocationStatusRecevingHeadingUpdatesImage	@"MTLocation.bundle/LocationHeading"
+#define kMTLocationStatusRecevingHeadingUpdatesImage    @"MTLocation.bundle/LocationHeading"
 
 // animation durations
 #define kShrinkAnimationDuration            0.25
@@ -289,13 +290,20 @@
 // is called when the user taps the button
 - (void)trackingModeToggled:(id)sender {
 	MTUserTrackingMode newTrackingMode = MTUserTrackingModeNone;
+    BOOL animated = YES;
     
 	// set new location status
 	switch (self.trackingMode) {
-			// if we are currently idle, search for location
+			// if we are currently idle, search for location if we don't have it, or show following straight away if we do.
 		case MTUserTrackingModeNone:
-			newTrackingMode = MTUserTrackingModeSearching;
-			break;
+              
+            if ([MTLocationManager sharedInstance].lastKnownLocation) {
+                newTrackingMode = MTUserTrackingModeFollow;
+                animated = NO;
+            } else {
+                newTrackingMode = MTUserTrackingModeSearching;
+			}
+            break;
             
 			// if we are currently searching, abort and switch back to idle
 		case MTUserTrackingModeSearching:
@@ -316,7 +324,7 @@
 	}
     
 	// update to new location status
-	[self setTrackingMode:newTrackingMode animated:YES];
+	[self setTrackingMode:newTrackingMode animated:animated];
     
 	// call delegate
     [self.delegate locateMeButton:self didChangeTrackingMode:newTrackingMode];

@@ -88,7 +88,7 @@
 }
 
 - (void)setTrackingMode:(MTUserTrackingMode)trackingMode animated:(BOOL)animated {
-	[self.locateMeButton setTrackingMode:trackingMode animated:YES];
+	[self.locateMeButton setTrackingMode:trackingMode animated:animated];
 }
 
 - (MTUserTrackingMode)trackingMode {
@@ -172,8 +172,13 @@
 }
 
 - (void)locationManagerDidStopUpdatingServices:(NSNotification *)notification {
-	// update locationStatus
-	[self setTrackingMode:MTUserTrackingModeNone animated:YES];
+	// Just change colour if we're following
+    if (self.trackingMode == MTUserTrackingModeFollow) {
+        [self setTrackingMode:MTUserTrackingModeNone animated:NO];
+    } else { // Otherwise animate the icon back in.
+        [self setTrackingMode:MTUserTrackingModeNone animated:YES];
+    }
+	
 }
 
 @end

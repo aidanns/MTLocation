@@ -145,7 +145,8 @@
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys: manager, kMTLocationLocationManagerKey,
 							  newHeading, kMTLocationNewHeadingKey, nil];
     
-    if (newHeading.headingAccuracy > 0) {
+    if (newHeading.headingAccuracy > 0 && !MTLocationUsesNewAPIs()) {
+        
         // show heading angle overlay
         [self.mapView showHeadingAngleView];
         // move heading angle overlay to new coordinate
